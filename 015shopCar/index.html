@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #btn{
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+        #btn span{
+            display: inline-block;
+            width: 49%;
+            padding: 10px 0;
+            text-align: center;
+        }
+        img{
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+        }
+        p{
+            margin-bottom: 5px;
+        }
+        .red{
+            background: red;
+        }
+        .wite{
+            background: white;
+        }
+    </style>
+</head>
+<body>
+<div id="box"></div>
+<div id="btn">
+    <span class="red">首页</span>
+    <span>购物车</span>
+</div>
+</body>
+<script src="js/jquery-1.11.1.min.js" charset="utf-8" type="text/javascript"></script>
+<script>
+    let htmlArr = ["html/shouye.html","html/shop.html"];
+    $("#box").load(htmlArr[0])
+    $("#btn").on("click","span",function () {
+        $(this).removeClass("wite").addClass("red").siblings().removeClass("red").addClass("wite")
+        $("#box").load(htmlArr[$(this).index()])
+    })
+
+
+    //字符串去空
+    function qu(str){
+        let newstr = str.replace(/\s*/g,"")
+        return newstr
+    }
+
+</script>
+</html>

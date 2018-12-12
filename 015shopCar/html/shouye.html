@@ -1,0 +1,87 @@
+<style>
+
+    input{
+        width: 80%;
+        height: 50px;
+        font-size: 25px;
+    }
+    input::placeholder{
+        font-size: 20px;
+    }
+    #sou{
+        width: 18%;
+        height: 50px;
+        font-size: 20px;
+    }
+</style>
+<!--<h2>首页</h2>-->
+<input type="text" placeholder="请输入手机|电脑|冰箱" ><button id="sou">搜索</button>
+<div id="con">
+
+</div>
+<script>
+    $(document).ready(function(){
+        show()
+        function show(){
+            $.get("/getdata",(data)=>{
+                let arr = data[0].list;
+                let str=""
+                for (let i = 0; i <arr.length ; i++) {
+                    let arr1 = arr[i].products
+                    for (let i = 0; i <arr1.length ; i++) {
+                        str += `
+                        <p>
+                            <img src="img/${arr1[i].img_url}" />
+                            <span>${arr1[i].name}</span>
+                            <span>￥${arr1[i].price}</span>
+                            <button class="addone" _id=${qu(JSON.stringify(arr1[i]))}>+</button>
+                        </p>`
+                    }
+                    $("#con").html(str)
+                }
+            })
+        }
+        function xr(arr){
+            let str=""
+            for (let i = 0; i <arr.length ; i++) {
+                str += `
+                <p>
+                    <img src="img/${arr[i].img_url}" />
+                    <span>${arr[i].name}</span>
+                    <span>￥${arr[i].price}</span>
+                    <button class="addone" _id=${qu(JSON.stringify(arr[i]))}>+</button>
+                </p>`
+            }
+            $("#con").html(str)
+        }
+        //搜索框
+        $("#sou").click(function(){
+            if($("input").val()=="冰箱"){
+                $(this).attr("_id","bx")
+            }else if($("input").val()=="手机"){
+                $(this).attr("_id","sj")
+            }else if($("input").val()=="电脑"){
+                $(this).attr("_id","dn")
+            }
+            $.get("/get",{type:$(this).attr("_id")},(data)=>{
+                console.log(data.products)
+                xr(data.products)
+            })
+        })
+        // //添加到购物车
+        $("#con").on("click",".addone",function(){
+            let obj = JSON.parse($(this).attr("_id"))
+            console.log(obj)
+            obj.num = "1";
+            $.post("/addcar",obj,(data)=>{
+                console.log(data)
+            })
+        })
+
+        // //字符串去空
+        // function qu(str){
+        //     let newstr = str.replace(/\s*/g,"")
+        //     return newstr
+        // }
+    })
+</script>

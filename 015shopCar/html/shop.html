@@ -1,0 +1,45 @@
+<h2>购物车</h2>
+<div id="car">
+
+</div>
+<p>总价：￥<span id="zong"></span></p>
+<script>
+    $(document).ready(function(){
+        carxr()
+        function carxr(){
+            $.get("/getcar",(data)=>{
+                let str=""
+                let zong="";
+                for (let i = 0; i <data.length ; i++) {
+                    str += `
+                    <p>
+                        <img src="img/${data[i].item.img_url}" />
+                        <span>${data[i].item.name}</span>
+                        <span>￥${data[i].item.price}</span>
+                        <span class="z">${data[i].zong}</span>
+                        <button class="addone" _id=${JSON.stringify(data[i].item)}>+</button>
+                        <span>${data[i].item.num}</span>
+                        <button class="jian" _id=${JSON.stringify(data[i].item)}>-</button>
+                    </p>`
+                    zong = zong*1 + data[i].zong*1
+                    }
+                $("#car").html(str)
+                $("#zong").html(zong)
+            })
+        }
+        $("#car").on("click",".addone",function(){
+            let obj = JSON.parse($(this).attr("_id"))
+            obj.num = "1";
+            $.post("/addcar",obj,(data)=>{
+                carxr()
+            })
+        })
+        $("#car").on("click",".jian",function(){
+            let obj = JSON.parse($(this).attr("_id"))
+            obj.num = "1";
+            $.post("/jiancar",obj,(data)=>{
+                carxr()
+            })
+        })
+    })
+</script>
