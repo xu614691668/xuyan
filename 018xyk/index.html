@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>心愿</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #con{
+            width: 800px;
+            height: 500px;
+            border: orange solid 1px;
+            position: relative;
+
+        }
+        #con div{
+            display: inline-block;
+            width: 200px;
+            min-height: 90px;
+            border: solid 1px green;
+        }
+        #con p{
+            width: 100%;
+            min-height: 30px;
+            border-bottom: solid 1px green;
+        }
+    </style>
+</head>
+<body>
+    心愿：<input type="text" placeholder="请输入你的心愿" />
+    <button id="add">提交</button>
+    <div id="con">
+
+    </div>
+</body>
+<script src="js/jquery-1.11.1.min.js" charset="utf-8" type="text/javascript"></script>
+<script>
+    $("#add").click(function(){
+        $.post("/add",{
+            content:$("input").val(),
+            color:"0"
+        },(data)=>{
+            console.log(data)
+            getdata()
+            $("input").val("")
+        })
+    })
+    getdata()
+    function getdata(){
+        $.get("/get",{limit:8},(data)=>{
+            let str = ""
+            for (let i = 0; i <data.length ; i++) {
+                str+=`
+                <div>
+                    <p><button class="del" _id=${data[i]._id}>删除</button></p>
+                    <p>${data[i].content}</p>
+                    <p class="dui" count=${JSON.stringify(data[i])}>√</p>
+                </div>`
+            }
+            $("#con").html(str)
+            $("#con>div").each(function(item,index){
+                $(this).css({
+                    position: "absolute",
+                    top:suiji(410,10),
+                    left:suiji(600,10)
+                })
+            })
+            for (let i = 0; i <data.length ; i++) {
+                if(data[i].color == 1){
+                    $("#con").children().eq(i).children(".dui").css("background","purple")
+                }
+            }
+        })
+    }
+
+    $("#con").on("click",".del",function(){
+        let id = $(this).attr("_id")
+        $.post("/del",{id:id},(data)=>{
+            getdata()
+        })
+    })
+
+    $("#con").on("click",".dui",function(){
+        let obj = JSON.parse($(this).attr("count"))
+        $.post("/dui",obj,(data)=>{
+            getdata()
+        })
+    })
+
+
+
+    function suiji(max,min){
+        return parseInt(Math.random()*(max-min)+min)
+    }
+</script>
+</html>
