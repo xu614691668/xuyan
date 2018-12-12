@@ -34,7 +34,7 @@ app.get("/get",(req,res)=>{
         let arrIndex = [];
         if(data.length>8){
             if(arr.length<8){
-                for (let i = 0; i < 8; i++) {
+                for (let i = 0; i < data.length; i++) {
                     let index = suiji(data.length,0);
                     if(arrIndex.indexOf(index) == -1){
                         arrIndex.push(index)

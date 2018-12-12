@@ -38,14 +38,18 @@
 <script src="js/jquery-1.11.1.min.js" charset="utf-8" type="text/javascript"></script>
 <script>
     $("#add").click(function(){
-        $.post("/add",{
-            content:$("input").val(),
-            color:"0"
-        },(data)=>{
-            console.log(data)
-            getdata()
-            $("input").val("")
-        })
+        if($("input").val()){
+            $.post("/add",{
+                content:$("input").val(),
+                color:"0"
+            },(data)=>{
+                console.log(data)
+                getdata()
+                $("input").val("")
+            })
+        }else{
+            alert("快来许个愿望吧，万一实现了呢")
+        }
     })
     getdata()
     function getdata(){
@@ -96,3 +100,4 @@
     }
 </script>
 </html>
+<!--https://github.com/xu614691668/xuyan.git-->
