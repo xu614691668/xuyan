@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Title</title>
+    <style>
+        img,ul,p,a,span{
+            display: inline-block;
+            margin: 6px;
+        }
+        li{
+            list-style: none;
+        }
+        a{
+            text-decoration: none;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            background: #2b669a;
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            vertical-align: middle;
+        }
+        #foot{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="con">
+
+    </div>
+    <div id="foot">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</body>
+<script src="js/jquery-1.11.1.min.js" charset="utf-8" type="text/javascript"></script>
+<script>
+    getdata()
+    function getdata(){
+        $.get("/getdata",(data)=>{
+            console.log(data)
+            let arr = data.arr
+            let str = ""
+            for (let i = 0; i < arr.length; i++) {
+                str+=`
+                    <div>
+                        <img src=img/${arr[i].shopImg} />
+                        <ul>
+                            <li>${arr[i].shopName}</li>
+                            <li>¥${arr[i].shopPrice}</li>
+                            <li><p class="p"><a href="#" class="jian" _id=${arr[i].children[0].shopId}>-</a><span>${arr[i].children[0].num}</span></p><a href="#" class="add"  _id=${arr[i].children[0].shopId}>+</a></li>
+                        </ul>
+                    </div>`
+            }
+            $("#con").html(str)
+            $("#foot").children().eq(0).html(data.znum)
+            $("#foot").children().eq(1).html("￥"+data.zong)
+            if(50-data.zong<0){
+                $("#foot").children().eq(2).html("去结算")
+            }else{
+                $("#foot").children().eq(2).html("还差"+50-data.zong+"元派送")
+            }
+        })
+    }
+    let bol=false
+    $("#con").on("click",".add",function(){
+        if(bol){
+            let num = $(this).siblings().children("span").html()*1+1
+            $(this).siblings().children("span").html(num)
+            getnum($(this).siblings().children("span").html(),$(this).attr("_id"))
+        }else{
+            $(this).siblings("p").show()
+            bol = true
+        }
+    })
+
+    $("#con").on("click",".jian",function(){
+        let num = $(this).siblings("span").html()*1
+        if(num==0){
+            $(this).parents("p").hide()
+            bol = false
+        }else{
+            $(this).siblings("span").html(num-1)
+            getnum($(this).siblings("span").html(),$(this).attr("_id"))
+        }
+    })
+    function getnum(num,id){
+        $.post("/addnum",{num,id},(data)=>{
+            console.log(data)
+            $.get("/getdata",(data)=>{
+                $("#foot").children().eq(0).html(data.znum)
+                $("#foot").children().eq(1).html("￥"+data.zong)
+
+                if(50-data.zong<0){
+                    $("#foot").children().eq(2).html("去结算")
+                }else{
+                    $("#foot").children().eq(2).html("还差"+50-data.zong+"元派送")
+                }
+            })
+        })
+    }
+
+</script>
+</html>
